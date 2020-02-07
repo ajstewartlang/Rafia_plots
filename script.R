@@ -201,3 +201,5 @@ axis_data <- axisfiles %>%
   mutate(graph_id = index) %>%
   select(- index)
 
+write_csv(axis_data, file.path(data_path, "axis_summary.csv"))
+
