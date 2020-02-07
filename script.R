@@ -132,6 +132,7 @@ for(index in my_graphs$graph_id) {
                         my_graphs[my_graphs$graph_id == index,]$title) 
   
   save_graph(raw_graph[[1]])
+  
   raw_graph[[2]] %>%
     enframe() %>%
     pivot_wider(names_from = name, values_from = value) %>%
@@ -199,4 +200,6 @@ axis_data <- axisfiles %>%
   reduce(rbind) %>%
   mutate(graph_id = index) %>%
   select(- index)
+
+write_csv(axis_data, file.path(data_path, "axis_summary.csv"))
 
