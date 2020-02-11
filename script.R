@@ -67,7 +67,7 @@ my_blank_graph <- function(df, labx, laby, title) {
           panel.grid = element_line(colour = "black"))
 
 
-  # adding gridlines manually - don't use
+   #adding extra gridlines manually - use if required
           #majors <- ggplot_build(p)$layout$panel_params[[1]]$y.major_source
           #multiplier <- 4
           #minors <- seq(from = 0,
@@ -86,13 +86,15 @@ my_blank_graph <- function(df, labx, laby, title) {
 # graph and the summary stats to be paired up later durind coding of the 
 # respones of participants. 
 
+# _s used to denote 'summary' and differentiates from csv files for axis limits
+
 save_graph <- function(current_graph){
   ggsave(paste0("graphs/graph_scatter_", index, ".jpg"), current_graph)
   build_this_one %>%
     group_by(x) %>%
     summarise(mean = mean(y), sd = sd(y)) %>%
     cbind(index) %>%
-    write_csv(paste0("summary_stats/summary", index, ".csv"))
+    write_csv(paste0("summary_stats/summary", index, "_s.csv"))
 }  
 
 save_bar_graph <- function(current_graph){
@@ -101,7 +103,7 @@ save_bar_graph <- function(current_graph){
     group_by(x) %>%
     summarise(mean = mean(y), sd = sd(y)) %>%
     cbind(index) %>%
-    write_csv(paste0("summary_stats/summary_bar", index, ".csv"))
+    write_csv(paste0("summary_stats/summary_bar", index, "_s.csv"))
 }  
 
 save_blank_graph <- function(current_graph){
@@ -110,7 +112,7 @@ save_blank_graph <- function(current_graph){
     group_by(x) %>%
     summarise(mean = mean(y), sd = sd(y)) %>%
     cbind(index) %>%
-    write_csv(paste0("summary_stats/summary_blank", index, ".csv"))
+    write_csv(paste0("summary_stats/summary_blank", index, "_s.csv"))
 }  
 
 # MAIN CODE ####
@@ -137,7 +139,9 @@ for(index in my_graphs$graph_id) {
     enframe() %>%
     pivot_wider(names_from = name, values_from = value) %>%
     cbind(index) %>%
-    write_csv(., paste0("summary_stats/summary", index, "axis.csv"))
+    write_csv(., paste0("summary_stats/summary", index, "_axis.csv"))
+  # _axis differentiates from csv files for summary stats
+  
 }
 
 # build bar graphs
@@ -177,10 +181,9 @@ for(index in my_graphs$graph_id) {
   
 }
 
-# I HAVEN'T YET RUN THIS
 # generate summary stats ####
 data_path <- "summary_stats"   # path to the data
-files <- dir(data_path, pattern = "*.csv") # get file names
+files <- dir(data_path, pattern = "_s.csv") # get file names
 
 # the following reads in all the .csv files from the summary_stats folder
 # and creates one master df that is then saved as "all_summary.csv"
@@ -193,7 +196,7 @@ my_data <- files %>%
 write_csv(my_data, file.path(data_path, "all_summary.csv"))
 
 # the same for the files containing the y axis limits
-axisfiles <- dir(data_path, pattern = "*axis.csv") # get file names
+axisfiles <- dir(data_path, pattern = "_axis.csv") # get file names
 
 axis_data <- axisfiles %>%
   map(function(x) read_csv(file.path(data_path, x))) %>%  
